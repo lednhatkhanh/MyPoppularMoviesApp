@@ -14,6 +14,46 @@ public class Movie {
     private Double userRating;
     private GregorianCalendar releaseDate;
 
+    public GregorianCalendar getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(GregorianCalendar releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPosterURL() {
+        return posterURL;
+    }
+
+    public void setPosterURL(String posterURL) {
+        this.posterURL = posterURL;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public Double getUserRating() {
+        return userRating;
+    }
+
+    public void setUserRating(Double userRating) {
+        this.userRating = userRating;
+    }
+
     public Movie(){
         title = posterURL = overview = "";
         userRating = 0d;
