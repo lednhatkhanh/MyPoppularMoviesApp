@@ -17,8 +17,8 @@ public class Movie implements Parcelable {
     private Double userRating;
     private GregorianCalendar releaseDate;
 
-    public GregorianCalendar getReleaseDate() {
-        return releaseDate;
+    public String getReleaseDate() {
+        return formatDate();
     }
 
     public void setReleaseDate(GregorianCalendar releaseDate) {

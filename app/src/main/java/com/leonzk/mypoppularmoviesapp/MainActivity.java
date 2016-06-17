@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                         .appendQueryParameter(SORT_BY,sort_by).build();
 
                 URL url = new URL(builtUri.toString());
+                Log.e(LOG_TAG,url.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -135,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     return null;
                 }
                 movieJsonString = buffer.toString();
+                //Log.e(LOG_TAG,movieJsonString);
                 return getMovieFromJSON(movieJsonString);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
