@@ -12,4 +12,19 @@
     tools:context="com.leonzk.mypoppularmoviesapp.DetailActivity"
     tools:showIn="@layout/activity_detail">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/detail_movie_poster_imageview"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/detail_movie_title"
+        android:layout_below="@+id/detail_movie_poster_imageview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="126dp" />
 </RelativeLayout>
