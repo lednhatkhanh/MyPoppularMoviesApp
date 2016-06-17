@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayGridView(){
-        GridView mMovieGridView = (GridView) findViewById(R.id.gridview_movie);
+        final GridView mMovieGridView = (GridView) findViewById(R.id.gridview_movie);
         mMovieAdapter = new MovieAdapter(this,new ArrayList<Movie>());
 
         if(mMovieGridView != null){
@@ -78,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                    Intent intent = new Intent(getApplicationContext(),DetailActivity.class);
+                    Intent intent = new Intent(getApplicationContext(),DetailActivity.class)
+                            .putExtra("Movie",(Parcelable) mMovieGridView.getItemAtPosition(i));
                     startActivity(intent);
                 }
             });
