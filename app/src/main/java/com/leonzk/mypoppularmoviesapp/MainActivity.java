@@ -127,16 +127,18 @@ public class MainActivity extends AppCompatActivity {
 
             try {
 
-                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
                 final String SORT_BY = "sort_by";
                 final String APPID_PARAM = "api_key";
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendQueryParameter(APPID_PARAM,API_KEY)
-                        .appendQueryParameter(SORT_BY,sort_by).build();
+                        .appendPath(sort_by)
+                        .appendQueryParameter(APPID_PARAM,BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .build();
 
                 URL url = new URL(builtUri.toString());
+                Log.e(LOG_TAG,url.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -158,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     return null;
                 }
                 movieJsonString = buffer.toString();
+                //Log.e(LOG_TAG,movieJsonString);
                 return getMovieFromJSON(movieJsonString);
             } catch (IOException e) {
 

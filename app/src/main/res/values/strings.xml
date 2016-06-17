@@ -14,8 +14,8 @@
     <string name="pref_sort_label_popularity">Popularity</string>
     <string name="pref_sort_label_top_rated">Top rated</string>
     <string name="pref_sort_key" translatable="false">sort</string>
-    <string name="pref_sort_popularity">popularity.desc</string>
-    <string name="pref_sort_top_rated">vote_average.desc</string>
+    <string name="pref_sort_popularity">popular</string>
+    <string name="pref_sort_top_rated">top_rated</string>
     
 
 </resources>
