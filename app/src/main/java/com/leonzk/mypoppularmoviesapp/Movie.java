@@ -1,12 +1,15 @@
 package com.leonzk.mypoppularmoviesapp;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 
 /**
  * Created by lednh on 17/06/2016.
  */
-public class Movie {
+public class Movie implements Parcelable {
 
     private String title;
     private String posterURL;
@@ -83,4 +86,44 @@ public class Movie {
         format.setCalendar(releaseDate);
         return format.format(releaseDate.getTime());
     }
+
+    protected Movie(Parcel in) {
+        title = in.readString();
+        posterURL = in.readString();
+        overview = in.readString();
+        userRating = in.readByte() == 0x00 ? null : in.readDouble();
+        releaseDate = (GregorianCalendar) in.readValue(GregorianCalendar.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(posterURL);
+        dest.writeString(overview);
+        if (userRating == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeDouble(userRating);
+        }
+        dest.writeValue(releaseDate);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 }
