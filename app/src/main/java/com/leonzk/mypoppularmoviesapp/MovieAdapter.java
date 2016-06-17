@@ -1,5 +1,6 @@
 package com.leonzk.mypoppularmoviesapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,7 @@ import java.util.List;
  * Created by lednh on 17/06/2016.
  */
 public class MovieAdapter extends ArrayAdapter<Movie> {
-    public MovieAdapter(Context context, List<Movie> objects) {
+    public MovieAdapter(Activity context, List<Movie> objects) {
         super(context, 0, objects);
     }
 
