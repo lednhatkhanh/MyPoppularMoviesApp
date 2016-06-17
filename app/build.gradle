@@ -11,6 +11,9 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'THE_MOVIE_DB_API_KEY', MyTheMovieDBApiKey
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -18,6 +21,7 @@ android {
         }
     }
 }
+
 repositories {
     mavenCentral()
 }

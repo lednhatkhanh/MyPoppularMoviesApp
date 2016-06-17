@@ -1,16 +1,34 @@
 package com.leonzk.mypoppularmoviesapp;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+
 public class MainActivity extends AppCompatActivity {
+
+    String movieJsonString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        new FetchMovieData().execute();
     }
 
     @Override
@@ -42,15 +62,129 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class FetchMovieData extends AsyncTask<Void, Void, Void>{
+    private class FetchMovieData extends AsyncTask<Void, Void, ArrayList<Movie>>{
+        private final String LOG_TAG = this.getClass().getSimpleName();
+
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected ArrayList<Movie> doInBackground(Void... voids) {
+            // These two need to be declared outside the try/catch
+            // so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            // Will contain the raw JSON response as a string.
+            movieJsonString = null;
+
+            String sort_by = "popularity.desc";
+
+            try {
+
+                final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
+
+                final String SORT_BY = "sort_by";
+                final String APPID_PARAM = "api_key";
+
+                Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
+                        .appendQueryParameter(APPID_PARAM,BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .appendQueryParameter(SORT_BY,sort_by).build();
+
+                URL url = new URL(builtUri.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    return null;
+                }
+                movieJsonString = buffer.toString();
+                return getMovieFromJSON(movieJsonString);
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attemping
+                // to parse it.
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        private ArrayList<Movie> getMovieFromJSON(String movieJsonStr) throws JSONException, MalformedURLException {
+
+            final String TMDB_RESULTS = "results";
+            final String TMDB_POSTER_PATH = "poster_path";
+            final String TMDB_ORIGINAL_TITLE = "original_title";
+            final String TMDB_OVERVIEW = "overview";
+            final String TMDB_VOTE_AVERAGE = "vote_average";
+            final String TMDB_RELEASE_DATE = "release_date";
+
+            JSONObject movieJson = new JSONObject(movieJsonStr);
+            JSONArray movieArray = movieJson.getJSONArray(TMDB_RESULTS);
+
+            ArrayList<Movie> resultArr = new ArrayList<>();
+
+            for(int i=0;i<movieArray.length();i++){
+                String poster_path;
+                String original_title;
+                String overview;
+                Double vote_average;
+                String release_date;
+
+                JSONObject movie = movieArray.getJSONObject(i);
+
+                poster_path = movie.getString(TMDB_POSTER_PATH).substring(1);
+                original_title = movie.getString(TMDB_ORIGINAL_TITLE);
+                overview = movie.getString(TMDB_OVERVIEW);
+                vote_average = movie.getDouble(TMDB_VOTE_AVERAGE);
+                release_date = movie.getString(TMDB_RELEASE_DATE);
+
+
+                Movie mMovie = new Movie(original_title,convertImageURL(poster_path),overview,vote_average,new GregorianCalendar(
+                        Integer.parseInt(getReleaseDate(release_date)[0]),Integer.parseInt(getReleaseDate(release_date)[1]),Integer.parseInt(getReleaseDate(release_date)[2])));
+                Log.e(LOG_TAG,i+": "+mMovie.toString());
+
+                resultArr.add(mMovie);
+            }
+            return resultArr;
+        }
+
+        private String convertImageURL(String posterURL) throws MalformedURLException {
+
+            final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
+
+            Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon()
+                    .appendPath("w185")
+                    .appendPath(posterURL).build();
+            URL imageURL = new URL(builtUri.toString());
+            return imageURL.toString();
+        }
+
+        private String[] getReleaseDate(String releaseDate) throws MalformedURLException {
+            return releaseDate.split("-");
         }
     }
 }
