@@ -1,5 +1,6 @@
 package com.leonzk.mypoppularmoviesapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -76,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
             mMovieGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    Toast.makeText(getApplicationContext(),"GridView item clicked",Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getApplicationContext(),DetailActivity.class);
+                    startActivity(intent);
                 }
             });
         }
