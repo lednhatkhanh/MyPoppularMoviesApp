@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +32,7 @@ import java.util.GregorianCalendar;
 public class MainActivity extends AppCompatActivity {
 
     String movieJsonString;
+    MovieAdapter mMovieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        displayGridView();
         new FetchMovieData().execute();
     }
 
@@ -60,6 +65,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void displayGridView(){
+        GridView mMovieGridView = (GridView) findViewById(R.id.gridview_movie);
+        mMovieAdapter = new MovieAdapter(this,new ArrayList<Movie>());
+
+        if(mMovieGridView != null){
+            mMovieGridView.setAdapter(mMovieAdapter);
+            mMovieGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Toast.makeText(getApplicationContext(),"GridView item clicked",Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private class FetchMovieData extends AsyncTask<Void, Void, ArrayList<Movie>>{
@@ -131,6 +151,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Movie> movies) {
+            super.onPostExecute(movies);
+
+            if(movies != null){
+                mMovieAdapter.clear();
+                mMovieAdapter.addAll(movies);
+            }
         }
 
         private ArrayList<Movie> getMovieFromJSON(String movieJsonStr) throws JSONException, MalformedURLException {
