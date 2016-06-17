@@ -3,4 +3,19 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="user_rating">%.2f/10</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_sort_label">Sort by</string>
+    <string name="pref_sort_label_popularity">Popularity</string>
+    <string name="pref_sort_label_top_rated">Top rated</string>
+    <string name="pref_sort_key" translatable="false">sort</string>
+    <string name="pref_sort_popularity">popularity.desc</string>
+    <string name="pref_sort_top_rated">vote_average.desc</string>
+    
+
 </resources>
