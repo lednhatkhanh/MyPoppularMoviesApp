@@ -1,10 +1,13 @@
 package com.leonzk.mypoppularmoviesapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     String movieJsonString;
     MovieAdapter mMovieAdapter;
+    private final String LOG_TAG = getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Dispatch onStart() to all fragments.  Ensure any created loaders are
+     * now started.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        refreshData();
+    }
+
+    private void refreshData(){
+        new FetchMovieData().execute();
+    }
+
     private class FetchMovieData extends AsyncTask<Void, Void, ArrayList<Movie>>{
         private final String LOG_TAG = this.getClass().getSimpleName();
 
@@ -102,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
             // Will contain the raw JSON response as a string.
             movieJsonString = null;
 
-            String sort_by = "popularity.desc";
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            String sort_by = sharedPreferences.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_popularity));
 
             try {
 
@@ -116,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
                         .appendQueryParameter(SORT_BY,sort_by).build();
 
                 URL url = new URL(builtUri.toString());
-                Log.e(LOG_TAG,url.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -138,12 +156,8 @@ public class MainActivity extends AppCompatActivity {
                     return null;
                 }
                 movieJsonString = buffer.toString();
-                //Log.e(LOG_TAG,movieJsonString);
                 return getMovieFromJSON(movieJsonString);
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -155,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
             }
@@ -204,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Movie mMovie = new Movie(original_title,convertImageURL(poster_path),overview,vote_average,new GregorianCalendar(
                         Integer.parseInt(getReleaseDate(release_date)[0]),Integer.parseInt(getReleaseDate(release_date)[1]),Integer.parseInt(getReleaseDate(release_date)[2])));
-                Log.e(LOG_TAG,i+": "+mMovie.toString());
 
                 resultArr.add(mMovie);
             }
