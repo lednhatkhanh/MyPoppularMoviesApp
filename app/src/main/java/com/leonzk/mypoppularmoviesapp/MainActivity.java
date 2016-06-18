@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             String API_KEY = "";
 
             try {
-
+                //Cleaned my app
                 final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
                 final String SORT_BY = "sort_by";
