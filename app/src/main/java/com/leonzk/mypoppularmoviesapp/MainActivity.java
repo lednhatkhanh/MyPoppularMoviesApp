@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             String sort_by = sharedPreferences.getString(getString(R.string.pref_sort_key),getString(R.string.pref_sort_popularity));
             //TODO: Add your own key here
-            String API_KEY = "You Key here!";
+            String API_KEY = "";
 
             try {
 
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendPath(sort_by)
-                        .appendQueryParameter(APPID_PARAM,BuildConfig.THE_MOVIE_DB_API_KEY)
+                        .appendQueryParameter(APPID_PARAM,API_KEY)
                         .build();
 
                 URL url = new URL(builtUri.toString());

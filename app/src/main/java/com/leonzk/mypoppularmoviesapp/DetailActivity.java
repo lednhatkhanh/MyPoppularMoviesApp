@@ -34,7 +34,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView userRating = (TextView) findViewById(R.id.detail_movie_user_rating_textview);
         TextView overview = (TextView) findViewById(R.id.detail_movie_overview_textview);
 
-        Picasso.with(this).load(movie.getPosterURL()).into(posterImageView);
+        Picasso.with(this).load(movie.getPosterURL()).resize(300, 500).into(posterImageView);
         title.setText(movie.getTitle());
         releaseDate.setText(movie.getReleaseDate());
         userRating.setText(String.format(getResources().getString(R.string.user_rating)
